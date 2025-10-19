@@ -1,0 +1,112 @@
+# ============================================
+# CIFAR-10 实验配置文件
+# ============================================
+
+# 数据集配置
+dataset:
+  name: "cifar10"
+  num_classes: 10
+  img_size: 32
+  num_workers: 4
+  pin_memory: true
+  
+  # 数据增强
+  augmentation:
+    train:
+      random_crop:
+        size: 32
+        padding: 4
+      random_horizontal_flip: true
+      cutout:
+        enabled: false
+        n_holes: 1
+        length: 16
+    
+    # 归一化参数 (CIFAR-10标准值)
+    normalize:
+      mean: [0.4914, 0.4822, 0.4465]
+      std: [0.2023, 0.1994, 0.2010]
+
+# 训练配置
+training:
+  epochs: 200
+  batch_size: 128
+  num_workers: 4
+  
+  optimizer:
+    name: adamw
+    lr: 0.001
+    weight_decay: 0.05
+  
+  scheduler:
+    name: cosine
+    min_lr: 0.000001 
+  
+  # 梯度裁剪
+  clip_grad_norm: 1.0
+  
+  # 其他
+  seed: 42
+  amp: true  # 自动混合精度
+  gradient_accumulation_steps: 1
+
+# 评估配置
+evaluation:
+  batch_size: 256
+  eval_frequency: 1  # 每N个epoch评估一次
+
+# 模型配置
+models:
+  # Vision Transformer
+  vit:
+    patch_size: 4
+    embed_dim: 256
+    depth: 6
+    num_heads: 8
+    mlp_ratio: 4.0
+    dropout: 0.1
+    drop_path: 0.1
+  
+  # gMLP
+  gmlp:
+    patch_size: 4
+    embed_dim: 256
+    depth: 6
+    seq_len: 64  # (32/4)^2 = 64 patches
+    mlp_ratio: 6
+    dropout: 0.1
+  
+  # MLP-Mixer
+  mlp_mixer:
+    patch_size: 4
+    hidden_dim: 256
+    depth: 8
+    tokens_mlp_dim: 256
+    channels_mlp_dim: 1024
+    dropout: 0.1
+  
+  # ResMLP
+  resmlp:
+    patch_size: 4
+    hidden_dim: 384
+    depth: 12
+    mlp_ratio: 4
+    drop_path: 0.1
+
+# 日志与保存
+logging:
+  log_dir: "results/logs"
+  checkpoint_dir: "results/checkpoints"
+  save_frequency: 50  # 每N个epoch保存一次
+  tensorboard: true
+  wandb:
+    enabled: false
+    project: "transformer-mlp-comparison"
+    entity: "qiqil"
+
+# 性能分析
+profiling:
+  enabled: true
+  measure_memory: true
+  measure_flops: false
+  inference_batches: 100  # 推理测试的batch数

@@ -1,0 +1,101 @@
+# ============================================
+# SST-2 情感分析实验配置
+# ============================================
+
+# 数据集配置
+dataset:
+  name: "sst2"
+  num_classes: 2
+  max_seq_length: 128
+  num_workers: 4
+  
+  # Tokenizer配置
+  tokenizer:
+    type: "bert-base-uncased"
+    do_lower_case: true
+    truncation: true
+    padding: "max_length"
+
+# 训练配置
+training:
+  batch_size: 32
+  epochs: 10
+  warmup_ratio: 0.1  # warmup步数占总步数的比例
+  
+  # 优化器
+  optimizer:
+    type: "AdamW"
+    lr: 2.0e-5
+    weight_decay: 0.01
+    betas: [0.9, 0.999]
+    eps: 1.0e-8
+  
+  # 学习率调度
+  scheduler:
+    type: "LinearWarmup"  # 线性warmup + 线性衰减
+    warmup_steps: null  # 将根据warmup_ratio计算
+  
+  # 梯度裁剪
+  clip_grad_norm: 1.0
+  
+  # 其他
+  seed: 42
+  amp: true
+  gradient_accumulation_steps: 2  # 有效batch_size = 32 * 2 = 64
+
+# 评估配置
+evaluation:
+  batch_size: 64
+  eval_frequency: 1
+  metric: "accuracy"  # 主要评估指标
+
+# 模型配置
+models:
+  # Text Transformer (纯Encoder)
+  text_transformer:
+    embed_dim: 256
+    depth: 6
+    num_heads: 8
+    mlp_ratio: 4.0
+    dropout: 0.1
+    max_seq_len: 128
+  
+  # gMLP for Text
+  gmlp_text:
+    embed_dim: 256
+    depth: 6
+    seq_len: 128
+    mlp_ratio: 6
+    dropout: 0.2
+  
+  # MLP-Mixer for Text
+  mlp_mixer_text:
+    hidden_dim: 256
+    depth: 8
+    tokens_mlp_dim: 512
+    channels_mlp_dim: 1024
+    dropout: 0.1
+  
+  # ResMLP for Text
+  resmlp_text:
+    hidden_dim: 384
+    depth: 12
+    mlp_ratio: 4
+    dropout: 0.1
+
+# 日志与保存
+logging:
+  log_dir: "results/logs/sst2"
+  checkpoint_dir: "results/checkpoints/sst2"
+  save_frequency: 1
+  tensorboard: true
+  wandb:
+    enabled: false
+    project: "transformer-mlp-sst2"
+
+# 性能分析
+profiling:
+  enabled: true
+  measure_memory: true
+  measure_flops: false
+  inference_batches: 100

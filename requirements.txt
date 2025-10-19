@@ -1,0 +1,7 @@
+torch>=1.13.1
+torchvision>=0.14.1
+transformers>=4.26.1
+datasets>=2.9.0
+PyYAML>=6.0
+numpy>=1.23.5
+tqdm

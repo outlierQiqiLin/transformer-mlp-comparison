@@ -1,0 +1,86 @@
+dataset:
+  augmentation:
+    normalize:
+      mean:
+      - 0.4914
+      - 0.4822
+      - 0.4465
+      std:
+      - 0.2023
+      - 0.1994
+      - 0.201
+    train:
+      cutout:
+        enabled: false
+        length: 16
+        n_holes: 1
+      random_crop:
+        padding: 4
+        size: 32
+      random_horizontal_flip: true
+  img_size: 32
+  name: cifar10
+  num_classes: 10
+  num_workers: 4
+  pin_memory: true
+evaluation:
+  batch_size: 256
+  eval_frequency: 1
+logging:
+  checkpoint_dir: results/checkpoints
+  log_dir: results/logs
+  save_frequency: 50
+  tensorboard: true
+  wandb:
+    enabled: false
+    entity: qiqil
+    project: transformer-mlp-comparison
+models:
+  gmlp:
+    depth: 6
+    dropout: 0.1
+    embed_dim: 256
+    mlp_ratio: 6
+    patch_size: 4
+    seq_len: 64
+  mlp_mixer:
+    channels_mlp_dim: 1024
+    depth: 8
+    dropout: 0.1
+    hidden_dim: 256
+    patch_size: 4
+    tokens_mlp_dim: 256
+  resmlp:
+    depth: 12
+    drop_path: 0.1
+    hidden_dim: 384
+    mlp_ratio: 4
+    patch_size: 4
+  vit:
+    depth: 6
+    drop_path: 0.1
+    dropout: 0.1
+    embed_dim: 256
+    mlp_ratio: 4.0
+    num_heads: 8
+    patch_size: 4
+profiling:
+  enabled: true
+  inference_batches: 100
+  measure_flops: false
+  measure_memory: true
+training:
+  amp: true
+  batch_size: 128
+  clip_grad_norm: 1.0
+  epochs: 200
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  optimizer:
+    lr: 0.001
+    name: adamw
+    weight_decay: 0.05
+  scheduler:
+    min_lr: 1e-6
+    name: cosine
+  seed: 42
