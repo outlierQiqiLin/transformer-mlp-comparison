@@ -77,21 +77,23 @@ models:
     dropout: 0.1
   
   # ResMLP for Text
-  resmlp_text:
+  resmlp:
+    patch_size: 4
     hidden_dim: 384
     depth: 12
     mlp_ratio: 4
-    dropout: 0.1
+    drop_path: 0.1
 
 # 日志与保存
 logging:
   log_dir: "results/logs/sst2"
   checkpoint_dir: "results/checkpoints/sst2"
-  save_frequency: 1
+  save_frequency: 50  # 每N个epoch保存一次
   tensorboard: true
   wandb:
     enabled: false
-    project: "transformer-mlp-sst2"
+    project: "transformer-mlp-comparison"
+    entity: "qiqil"
 
 # 性能分析
 profiling:

@@ -1,0 +1,86 @@
+# ResMLP 消融实验配置文件
+# config/cifar10_resmlp_ablation.yaml
+
+dataset:
+  name: sst2
+  # 使用一个标准的预训练分词器来处理文本
+  tokenizer_name: bert-base-uncased
+  max_seq_len: 128 # SST-2 句子不长，128 足够
+  num_classes: 2   # 积极/消极
+
+# 所有变体使用相同的基础配置
+models:
+  # 变体1: 原始 ResMLP (baseline)
+  resmlp_baseline:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1
+    expansion_factor: 4
+    dropout_rate: 0.0
+    variant: baseline
+  
+  # 变体2: ResMLP + Attention
+  resmlp_attn:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1
+    expansion_factor: 4
+    dropout_rate: 0.0
+    num_heads: 8
+    variant: attn
+  
+  # 变体3: ResMLP + LayerNorm (移除 Affine)
+  resmlp_no_affine:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1
+    expansion_factor: 4
+    dropout_rate: 0.0
+    variant: no_affine
+  
+  # 变体4: ResMLP 无 LayerScale
+  resmlp_no_layerscale:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1  # 会被忽略
+    expansion_factor: 4
+    dropout_rate: 0.0
+    variant: no_layerscale
+  
+  # 变体5: ResMLP 无 Cross-Patch (只有 MLP)
+  resmlp_no_cross_patch:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1
+    expansion_factor: 4
+    dropout_rate: 0.0
+    variant: no_cross_patch
+  
+  # 变体6: ResMLP Full (Attention + LayerNorm, 类似 ViT)
+  resmlp_full:
+    dim: 384
+    depth: 12
+    layerscale_init: 0.1
+    expansion_factor: 4
+    dropout_rate: 0.0
+    num_heads: 8
+    variant: full
+
+training:
+  epochs: 10
+  batch_size: 128
+  num_workers: 4
+  
+  optimizer:
+    name: adamw
+    lr: 0.0001 # 文本任务的学习率通常设置得更小
+    weight_decay: 0.01
+  
+  scheduler:
+    name: cosine
+    min_lr: 0.000001
+
+logging:
+  checkpoint_dir: ./results/ablation_study_sst2
+  save_freq: 5
+  log_freq: 10

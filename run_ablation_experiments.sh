@@ -2,7 +2,8 @@
 # 一键运行所有 ResMLP 消融实验
 # 用法: bash run_ablation_experiments.sh
 
-CONFIG="config/cifar10_resmlp_ablation.yaml"
+# CONFIG="config/cifar10_resmlp_ablation.yaml"
+CONFIG="config/sst2_resmlp_ablation.yaml"
 
 echo "=========================================="
 echo "ResMLP 消融实验 - 批量运行"
@@ -30,7 +31,7 @@ do
     echo ""
     
     # 运行训练
-    python train_resmlp_ablation.py --config $CONFIG --variant $variant
+    python train_resmlp_ablation_sst2.py --config $CONFIG --variant $variant
     
     if [ $? -eq 0 ]; then
         echo ""
@@ -47,6 +48,6 @@ done
 echo "=========================================="
 echo "🎉 所有实验完成！"
 echo "=========================================="
-echo ""
-echo "运行以下命令查看结果对比："
-echo "python compare_ablation_results.py"
+# echo ""
+# echo "运行以下命令查看结果对比："
+# echo "python compare_ablation_results.py"
